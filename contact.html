@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Equalizer Contact Page</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(45deg, #1e1e1e, #2a2a2a);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        .container {
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .equalizer {
+            display: flex;
+            justify-content: space-between;
+            height: 100px;
+            margin-bottom: 30px;
+        }
+
+        .bar {
+            width: 8px;
+            background: linear-gradient(to top, #ff00ff, #00ffff);
+            border-radius: 4px;
+            transition: height 0.2s ease;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        input, textarea {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        input:focus, textarea:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+            outline: none;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        button {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            color: #fff;
+            font-size: 18px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+        }
+
+        @keyframes glow {
+            0% { box-shadow: 0 0 5px rgba(0, 255, 255, 0.5), 0 0 10px rgba(255, 0, 255, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(0, 255, 255, 0.8), 0 0 30px rgba(255, 0, 255, 0.8); }
+            100% { box-shadow: 0 0 5px rgba(0, 255, 255, 0.5), 0 0 10px rgba(255, 0, 255, 0.5); }
+        }
+
+        .container {
+            animation: glow 3s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Drop Us a Beat</h1>
+        <div class="equalizer">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+        <form id="contactForm">
+            <input type="text" id="name" placeholder="Your Name" required>
+            <input type="email" id="email" placeholder="Your Email" required>
+            <textarea id="message" placeholder="Your Message" required></textarea>
+            <button type="submit">Send the Vibes</button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('contactForm');
+            const bars = document.querySelectorAll('.bar');
+            const inputs = document.querySelectorAll('input, textarea');
+
+            function animateBars() {
+                bars.forEach(bar => {
+                    const height = Math.random() * 100;
+                    bar.style.height = `${height}%`;
+                });
+            }
+
+            setInterval(animateBars, 100);
+
+            inputs.forEach(input => {
+                input.addEventListener('focus', () => {
+                    animateBars();
+                });
+
+                input.addEventListener('input', () => {
+                    animateBars();
+                });
+            });
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                const name = document.getElementById('name').value;
+                const email = document.getElementById('email').value;
+                const message = document.getElementById('message').value;
+
+                console.log('Form submitted:', { name, email, message });
+
+                form.reset();
+
+                alert('Thanks for dropping us a beat! We\'ll get back to you soon.');
+            });
+        });
+    </script>
+</body>
+</html>

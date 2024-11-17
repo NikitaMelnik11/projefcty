@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Interactive Musicians Showcase</title>
+    <style>
+        :root {
+            --primary-color: #6200ea;
+            --secondary-color: #00e5ff;
+            --background-color: #121212;
+            --text-color: #ffffff;
+            --accent-color: #ff4081;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+        }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px var(--accent-color), 0 0 35px var(--accent-color), 0 0 40px var(--accent-color), 0 0 50px var(--accent-color), 0 0 75px var(--accent-color); }
+            50% { text-shadow: 0 0 2px #fff, 0 0 5px #fff, 0 0 7px #fff, 0 0 10px var(--accent-color), 0 0 17px var(--accent-color), 0 0 20px var(--accent-color), 0 0 25px var(--accent-color), 0 0 37px var(--accent-color); }
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        header {
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            padding: 4rem 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        h1 {
+            font-size: 4rem;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            animation: glow 2s ease-in-out infinite;
+        }
+        .subtitle {
+            font-size: 1.5rem;
+            margin-top: 0.5rem;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.5s forwards;
+        }
+        .floating-notes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        .note {
+            position: absolute;
+            font-size: 2rem;
+            color: rgba(255, 255, 255, 0.8);
+            animation: float 3s infinite ease-in-out, pulse 2s infinite ease-in-out;
+        }
+        nav {
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: background-color 0.3s ease;
+        }
+        nav.scrolled {
+            background-color: rgba(0, 0, 0, 0.95);
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+        }
+        nav ul li {
+            margin: 0 15px;
+        }
+        nav ul li a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+        nav ul li a::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--accent-color);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        nav ul li a:hover::after {
+            transform: scaleX(1);
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .musician-card {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            margin-bottom: 2rem;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .musician-card.visible {
+            animation: fadeInUp 1s ease-out forwards;
+        }
+        .musician-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
+        }
+        .musician-header {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .musician-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%);
+            transform: rotate(45deg);
+            transition: all 0.5s ease-out;
+        }
+        .musician-card:hover .musician-header::before {
+            top: -20%;
+            left: -20%;
+        }
+        .musician-content {
+            padding: 2rem;
+        }
+        h2 {
+            color: var(--accent-color);
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 10px;
+            margin-top: 0;
+            position: relative;
+            display: inline-block;
+        }
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+        .musician-card:hover h2::after {
+            width: 100%;
+        }
+        .music-player {
+            background: linear-gradient(45deg, #333, #1a1a1a);
+            border-radius: 15px;
+            padding: 1rem;
+            margin-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        .music-player:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(255, 64, 129, 0.3);
+        }
+        .music-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+        .music-player button {
+            background-color: var(--accent-color);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        .music-player button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.5s ease, height 0.5s ease;
+        }
+        .music-player button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        .music-player button:hover {
+            background-color: #ff6b9b;
+            transform: translateY(-2px);
+        }
+        .visualizer {
+            width: 100%;
+            height: 60px;
+            background-color: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            align-items: flex-end;
+        }
+        .bar {
+            width: 5px;
+            background-color: var(--accent-color);
+            margin-right: 2px;
+            transition: height 0.1s ease;
+        }
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 3rem;
+            }
+            .subtitle {
+                font-size: 1.2rem;
+            }
+            nav ul li {
+                margin: 0 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="floating-notes" aria-hidden="true">
+            <!-- Musical notes will be dynamically added here by JavaScript -->
+        </div>
+        <h1>Musicians Showcase</h1>
+        <p class="subtitle">Explore the Sounds of Innovation</p>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="#tai">Tai</a></li>
+            <li><a href="#luna">Luna</a></li>
+            <li><a href="#zephyr">Zephyr</a></li>
+        </ul>
+    </nav>
+    <main class="container">
+        <section id="tai" class="musician-card">
+            <div class="musician-header">
+                <h2>MONATIK</h2>
+            </div>
+            <div class="musician-content">
+                <p>Монатик (Дмитрий Монатик) — украинский певец, танцор, композитор и продюсер, популярный за свои зажигательные поп, фанк и электро-треки. Он начинал карьеру как танцор и стал известен благодаря уникальному стилю и харизматичным выступлениям. В его творчестве сочетаются элементы танцевальной музыки, соул, R&B, что делает его песни не только хитами, но и своеобразными историями о любви, мечтах и личных победах. Монатик известен активной поддержкой молодых артистов и внес большой вклад в украинскую поп-культуру.</p>
+                <div class="music-player" data-music-url="https://drivemusic.club/new_music/80122-monatik-kruzhit.html">
+                    <div class="music-controls">
+                        <button class="play-pause">Play</button>
+                        <button class="stop">Stop</button>
+                    </div>
+                    <div class="visualizer"></div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="luna" class="musician-card">
+            <div class="musician-header">
+                <h2>Luna</h2>
+                <p>Ethereal Vocalist</p>
+            </div>
+            <div class="musician-content">
+                <p>Luna's haunting vocals and atmospheric compositions transport listeners to otherworldly realms. Blending elements of dream pop, ambient, and neo-classical music, her sound is a celestial journey through emotion and imagination.</p>
+                <div class="music-player" data-music-url="https://example.com/luna_music.mp3">
+                    <div class="music-controls">
+                        <button class="play-pause">Play</button>
+                        <button class="stop">Stop</button>
+                    </div>
+                    <div class="visualizer"></div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="zephyr" class="musician-card">
+            <div class="musician-header">
+                <h2>Zephyr</h2>
+                <p>Rhythmic Alchemist</p>
+            </div>
+            <div class="musician-content">
+                <p>Zephyr's music is a pulsating fusion of world rhythms and cutting-edge electronic production. His tracks seamlessly blend organic percussion with synthesized beats, creating a unique sound that's both primal and futuristic.</p>
+                <div class="music-player" data-music-url="https://example.com/zephyr_music.mp3">
+                    <div class="music-controls">
+                        <button class="play-pause">Play</button>
+                        <button class="stop">Stop</button>
+                    </div>
+                    <div class="visualizer"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <script>
+        // Floating musical notes
+        const noteSymbols = ['♪', '♫', '♬', '♩', '♭', '♮', '♯'];
+        const floatingNotes = document.querySelector('.floating-notes');
+        for (let i = 0; i < 15; i++) {
+            const note = document.createElement('div');
+            note.className = 'note';
+            note.textContent = noteSymbols[Math.floor(Math.random() * noteSymbols.length)];
+            note.style.left = `${Math.random() * 100}%`;
+            note.style.top = `${Math.random() * 100}%`;
+            note.style.animationDelay = `${Math.random() * 3}s`;
+            floatingNotes.appendChild(note);
+        }
+
+        // Music player functionality
+        document.querySelectorAll('.music-player').forEach(player => {
+            const playPauseBtn = player.querySelector('.play-pause');
+            const stopBtn = player.querySelector('.stop');
+            const visualizer = player.querySelector('.visualizer');
+            const musicUrl = player.dataset.musicUrl;
+            let audio = new Audio(musicUrl);
+            let isPlaying = false;
+            let visualizerInterval;
+
+            playPauseBtn.addEventListener('click', () => {
+                if (isPlaying) {
+                    audio.pause();
+                    playPauseBtn.textContent = 'Play';
+                    stopVisualizer();
+                } else {
+                    audio.play();
+                    playPauseBtn.textContent = 'Pause';
+                    startVisualizer();
+                }
+                isPlaying = !isPlaying;
+            });
+
+            stopBtn.addEventListener('click', () => {
+                audio.pause();
+                audio.currentTime = 0;
+                playPauseBtn.textContent = 'Play';
+                isPlaying = false;
+                stopVisualizer();
+            });
+
+            function createBars() {
+                visualizer.innerHTML = '';
+                for (let i = 0; i < 50; i++) {
+                    const bar = document.createElement('div');
+                    bar.className = 'bar';
+                    visualizer.appendChild(bar);
+                }
+            }
+
+            function animateBars() {
+                const bars = visualizer.getElementsByClassName('bar');
+                for (let bar of bars) {
+                    const height = Math.random() * 100;
+                    bar.style.height = `${height}%`;
+                }
+            }
+
+            function startVisualizer() {
+                createBars();
+                visualizerInterval = setInterval(animateBars, 100);
+            }
+
+            function stopVisualizer() {
+                clearInterval(visualizerInterval);
+                visualizer.innerHTML = '';
+            }
+        });
+
+        // Smooth scrolling for navigation
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                window.scrollTo({
+                    top: targetElement.offsetTop - 70,
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Parallax effect for header and nav color change
+        const header = document.querySelector('header');
+        const nav = document.querySelector('nav');
+        window.addEventListener('scroll', () => {
+            const scrollPosition = window.pageYOffset;
+            header.style.backgroundPositionY = `${scrollPosition * 0.5}px`;
+            
+            if (scrollPosition > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+
+        // Intersection Observer for fade-in effect
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.musician-card').forEach(card => {
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>
